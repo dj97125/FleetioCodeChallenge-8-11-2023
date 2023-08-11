@@ -2,7 +2,6 @@ package com.danielcaballero.fleetiocodechallenge.di
 
 import android.util.Log
 import com.danielcaballero.fleetiocodechallenge.common.BASE_URL
-import com.danielcaballero.fleetiocodechallenge.common.CustomInterceptor
 import com.danielcaballero.fleetiocodechallenge.domain.Repository
 import com.danielcaballero.fleetiocodechallenge.domain.RepositoryImpl
 import com.danielcaballero.fleetiocodechallenge.model.network.LocalDataSource
@@ -15,6 +14,7 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ViewModelComponent
 import kotlinx.coroutines.CoroutineExceptionHandler
 import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
@@ -55,9 +55,9 @@ interface Module {
 
         @Provides
         fun provideOkHttpClient(): OkHttpClient =
-            OkHttpClient.Builder().apply {
-                addInterceptor(CustomInterceptor())
-            }
+            OkHttpClient.Builder().addInterceptor(HttpLoggingInterceptor().apply {
+                level = HttpLoggingInterceptor.Level.BODY
+            })
                 .connectTimeout(30, TimeUnit.SECONDS)
                 .readTimeout(30, TimeUnit.SECONDS)
                 .writeTimeout(30, TimeUnit.SECONDS)
