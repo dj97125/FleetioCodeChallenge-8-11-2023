@@ -6,5 +6,5 @@ const val BASE_URL =
 
 const val END_URL = "/v1/vehicles/"
 
-const val TOKEN = "a3ddc620b35b609682192c167de1b1f3f5100387"
-const val ACCOUNT_TOKEN = "798819214b"
+const val TOKEN = "Token fa72999e8055d05c909bd7907da9fc2011ba965c"
+const val ACCOUNT_TOKEN = "874dacbcea"
