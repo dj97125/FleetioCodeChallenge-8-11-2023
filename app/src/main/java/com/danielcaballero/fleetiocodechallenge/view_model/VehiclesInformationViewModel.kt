@@ -10,12 +10,10 @@ import com.danielcaballero.fleetiocodechallenge.model.network.fleet_response.Fle
 import com.danielcaballero.fleetiocodechallenge.use_cases.GetVehiclesUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineExceptionHandler
-import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.supervisorScope
 import javax.inject.Inject
@@ -32,10 +30,8 @@ class VehiclesInformationViewModel @Inject constructor(
     val vehiclesResponse: StateFlow<StateAction?>
         get() = _vehiclesResponse.asStateFlow()
 
-    private val _isVisible: MutableStateFlow<Boolean> =
-        MutableStateFlow(false)
-    val isVisible: StateFlow<Boolean>
-        get() = _isVisible.asStateFlow()
+    var isVisibleVM by mutableStateOf<Boolean>(false)
+        private set
 
     var vehicleDetails by mutableStateOf<FleetResponseItem?>(null)
         private set
@@ -48,6 +44,10 @@ class VehiclesInformationViewModel @Inject constructor(
         vehicleDetails = details
     }
 
+    fun changeVisibility(isVisible: Boolean) {
+        isVisibleVM = isVisible
+    }
+
     fun getVehicles() {
         _vehiclesResponse.value = StateAction.Loading
         viewModelScope.launch(corroutineExceptionHandler) {
@@ -56,7 +56,7 @@ class VehiclesInformationViewModel @Inject constructor(
                     delay(3000L)///// bad pratice this line, just created with the purpose for enjoying the splash screen
                     getVehiclesUseCase().collect() {
                         _vehiclesResponse.value = it
-                        _isVisible.value = true
+                        isVisibleVM = true
 
                     }
                 }

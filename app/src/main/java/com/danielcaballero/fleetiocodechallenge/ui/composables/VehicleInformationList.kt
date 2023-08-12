@@ -15,7 +15,6 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -41,7 +40,7 @@ import com.danielcaballero.fleetiocodechallenge.view_model.VehiclesInformationVi
 fun VehicleInformationList(viewModel: VehiclesInformationViewModel, onNavigate: () -> Unit) {
 
     val vehicleInfo by viewModel.vehiclesResponse.collectAsStateWithLifecycle()
-    val isVisible by viewModel.isVisible.collectAsStateWithLifecycle()
+    val isVisible = viewModel.isVisibleVM
 
     Box(
         modifier = Modifier
@@ -63,7 +62,7 @@ fun VehicleInformationList(viewModel: VehiclesInformationViewModel, onNavigate: 
                     isVisible = isVisible,
                     title = "SUCCESS",
                     body = "Welcome to your fleet list",
-                    onDismiss = {}
+                    onDismiss = { viewModel.changeVisibility(isVisible = false) }
                 )
 
 
@@ -76,7 +75,7 @@ fun VehicleInformationList(viewModel: VehiclesInformationViewModel, onNavigate: 
                     onRetry = { viewModel.getVehicles() },
                     title = "ERROR",
                     body = "Something went wrong",
-                    onDismiss = {}
+                    onDismiss = { viewModel.changeVisibility(isVisible = false) }
                 )
 
             }
