@@ -32,8 +32,10 @@ class VehiclesInformationViewModel @Inject constructor(
     val vehiclesResponse: StateFlow<StateAction?>
         get() = _vehiclesResponse.asStateFlow()
 
-    private val eventChannel = Channel<StateAction>()
-    val eventFlow = eventChannel.receiveAsFlow()
+    private val _isVisible: MutableStateFlow<Boolean> =
+        MutableStateFlow(false)
+    val isVisible: StateFlow<Boolean>
+        get() = _isVisible.asStateFlow()
 
     var vehicleDetails by mutableStateOf<FleetResponseItem?>(null)
         private set
@@ -54,7 +56,8 @@ class VehiclesInformationViewModel @Inject constructor(
                     delay(3000L)///// bad pratice this line, just created with the purpose for enjoying the splash screen
                     getVehiclesUseCase().collect() {
                         _vehiclesResponse.value = it
-                        eventChannel.send(it)/// this is for handling componse side effects at the moment to rotate the screen
+                        _isVisible.value = true
+
                     }
                 }
             }

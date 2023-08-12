@@ -15,7 +15,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -41,30 +41,13 @@ import com.danielcaballero.fleetiocodechallenge.view_model.VehiclesInformationVi
 fun VehicleInformationList(viewModel: VehiclesInformationViewModel, onNavigate: () -> Unit) {
 
     val vehicleInfo by viewModel.vehiclesResponse.collectAsStateWithLifecycle()
-    val eventFlow by viewModel.eventFlow.collectAsState(null)
-
-
+    val isVisible by viewModel.isVisible.collectAsStateWithLifecycle()
 
     Box(
         modifier = Modifier
             .fillMaxSize()
             .padding(8.dp)
     ) {
-
-        when (eventFlow) {
-            is StateAction.Succes<*> -> AlertWelcome(
-                title = "SUCCESS",
-                body = "Welcome to your fleet list"
-            )
-
-            is StateAction.Errror -> AlertError(
-                onRetry = { viewModel.getVehicles() },
-                title = "ERROR",
-                body = "Something went wrong"
-            )
-
-            else -> {}
-        }
 
         when (val state = vehicleInfo) {
             is StateAction.Succes<*> -> {
@@ -74,6 +57,27 @@ fun VehicleInformationList(viewModel: VehiclesInformationViewModel, onNavigate: 
                         viewModel.addVehicleDetails(it)
                     },
                     onNextScreen = { onNavigate() })
+
+
+                AlertWelcome(
+                    isVisible = isVisible,
+                    title = "SUCCESS",
+                    body = "Welcome to your fleet list",
+                    onDismiss = {}
+                )
+
+
+            }
+
+            is StateAction.Errror -> {
+
+                AlertError(
+                    isVisible = isVisible,
+                    onRetry = { viewModel.getVehicles() },
+                    title = "ERROR",
+                    body = "Something went wrong",
+                    onDismiss = {}
+                )
 
             }
 
